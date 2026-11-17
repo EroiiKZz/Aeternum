@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+<clipPath id="sa"><rect x="64" y="0" width="64" height="128"/></clipPath>
+<path id="sap" d="M38 20 Q64 40 90 20 L112 30 V54 H94 V70 Q94 96 64 110 Q34 96 34 70 V54 H16 V30Z" fill="none" stroke="{lime}" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M38 20 Q64 40 90 20 L112 30 V54 H94 V70 Q94 96 64 110 Q34 96 34 70 V54 H16 V30Z" fill="{lime}" clip-path="url(#sa)"/>
+<path fill="{ink}" d="M79 54 Q80.92 64.08 91 66 Q80.92 67.92 79 78 Q77.08 67.92 67 66 Q77.08 64.08 79 54Z"/></svg>

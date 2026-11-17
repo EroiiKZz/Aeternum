@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+<circle cx="26" cy="34" r="8" fill="{lime}"/><circle cx="26" cy="64" r="8" fill="{lime}"/><circle cx="26" cy="94" r="8" fill="{dim}"/>
+<path d="M44 34 H78 M44 64 H70" fill="none" stroke="{fg}" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M44 94 H74" fill="none" stroke="{dim}" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M94 40 V34 M106 40 V24 M94 70 V64 M106 70 V54" fill="none" stroke="{lime}" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M94 100 V94" fill="none" stroke="{dim}" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg>

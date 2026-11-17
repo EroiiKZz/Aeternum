@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+<defs>
+<clipPath id="plate">
+<path d="M48 24 H55 C56 32 59 37 64 37 C69 37 72 32 73 24 H80 L98 30 C102 31 104 34 104 38 V58 C104 61 102 63 99 63 H90 V96 C90 101 86 104 81 104 H47 C42 104 38 101 38 96 V63 H29 C26 63 24 61 24 58 V38 C24 34 26 31 30 30 Z"/>
+</clipPath>
+</defs>
+<g clip-path="url(#plate)">
+<rect x="0" y="0" width="64" height="128" fill="{secondary_dark}"/>
+<rect x="30" y="0" width="9" height="128" fill="{secondary}"/>
+<rect x="48" y="0" width="9" height="128" fill="{secondary}"/>
+<rect x="64" y="0" width="64" height="128" fill="{accent}"/>
+<rect x="64" y="0" width="64" height="44" fill="{accent_light}" fill-opacity="0.35"/>
+<rect x="0" y="61" width="128" height="3" fill="{background}"/>
+<rect x="0" y="80" width="128" height="7" fill="{background}" fill-opacity="0.35"/>
+</g>
+<path d="M64 18 V110" stroke="{text}" stroke-width="3" stroke-linecap="round"/>
+</svg>

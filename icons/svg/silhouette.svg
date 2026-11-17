@@ -1,0 +1,4 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+<clipPath id="slL"><rect x="0" y="0" width="60" height="128"/></clipPath><clipPath id="slR"><rect x="68" y="0" width="60" height="128"/></clipPath>
+<path d="M64 16 A23 23 0 0 1 64 62 A23 23 0 0 1 64 16Z M18 110 Q18 74 64 74 Q110 74 110 110Z" fill="{lime}" clip-path="url(#slL)"/>
+<g clip-path="url(#slR)"><path d="M64 19.5 A19.5 19.5 0 0 1 64 58.500 A19.5 19.5 0 0 1 64 19.5Z M21.5 106.5 Q22 77.500 64 77.500 Q106 77.500 106.500 106.500Z" fill="none" stroke="{lime}" stroke-width="7" stroke-linejoin="round"/></g></svg>

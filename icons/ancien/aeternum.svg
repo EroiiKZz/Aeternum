@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+<path fill="{accent}" fill-rule="evenodd" d="M57 22 H71 L99 96 H84 L77.5 78 H50.5 L44 96 H29 Z M55 66 H73 L64 41 Z"/>
+<path fill="{accent_light}" d="M57 22 H71 L69.4 26.5 H58.6 Z"/>
+<rect x="38" y="104" width="52" height="5" rx="2.5" fill="{secondary}"/>
+</svg>

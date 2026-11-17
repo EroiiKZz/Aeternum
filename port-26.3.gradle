@@ -1,0 +1,133 @@
+def portDir = file(project.ext.portDir)
+
+def moved = [
+	'com.mojang.blaze3d.GpuFormat'                  : 'com.mojang.renderpearl.api.GpuFormat',
+	'com.mojang.blaze3d.PrimitiveTopology'          : 'com.mojang.renderpearl.api.pipeline.PrimitiveTopology',
+	'com.mojang.blaze3d.buffers.GpuBufferSlice'     : 'com.mojang.renderpearl.api.buffers.GpuBufferSlice',
+	'com.mojang.blaze3d.buffers.GpuBuffer'          : 'com.mojang.renderpearl.api.buffers.GpuBuffer',
+	'com.mojang.blaze3d.pipeline.BindGroupLayout'   : 'com.mojang.renderpearl.api.pipeline.BindGroupLayout',
+	'com.mojang.blaze3d.pipeline.BlendFunction'     : 'com.mojang.renderpearl.api.pipeline.BlendFunction',
+	'com.mojang.blaze3d.pipeline.ColorTargetState'  : 'com.mojang.renderpearl.api.pipeline.ColorTargetState',
+	'com.mojang.blaze3d.pipeline.DepthStencilState' : 'com.mojang.renderpearl.api.pipeline.DepthStencilState',
+	'com.mojang.blaze3d.pipeline.RenderPipeline'    : 'com.mojang.renderpearl.api.pipeline.RenderPipeline',
+	'com.mojang.blaze3d.platform.BlendFactor'       : 'com.mojang.renderpearl.api.pipeline.BlendFactor',
+	'com.mojang.blaze3d.platform.CompareOp'         : 'com.mojang.renderpearl.api.pipeline.CompareOp',
+	'com.mojang.blaze3d.shaders.UniformType'        : 'com.mojang.renderpearl.api.pipeline.UniformType',
+	'com.mojang.blaze3d.systems.RenderPass'         : 'com.mojang.renderpearl.api.commands.RenderPass',
+	'com.mojang.blaze3d.textures.FilterMode'        : 'com.mojang.renderpearl.api.textures.FilterMode',
+	'com.mojang.blaze3d.textures.GpuSampler'        : 'com.mojang.renderpearl.api.textures.GpuSampler',
+	'com.mojang.blaze3d.textures.GpuTextureView'    : 'com.mojang.renderpearl.api.textures.GpuTextureView',
+]
+
+def keys = [
+	KEY_ENTER        : 'KEY_RETURN',
+	KEY_LEFT_SHIFT   : 'KEY_LSHIFT',
+	KEY_RIGHT_SHIFT  : 'KEY_RSHIFT',
+	KEY_LEFT_CONTROL : 'KEY_LCONTROL',
+	KEY_RIGHT_CONTROL: 'KEY_RCONTROL',
+	KEY_LEFT_ALT     : 'KEY_LALT',
+	KEY_RIGHT_ALT    : 'KEY_RALT',
+	KEY_LEFT_SUPER   : 'KEY_LSUPER',
+	KEY_RIGHT_SUPER  : 'KEY_RSUPER',
+	KEY_KP_ENTER     : 'KEY_NUMPADENTER',
+	KEY_KP_ADD       : 'KEY_ADD',
+	KEY_KP_SUBTRACT  : 'org.lwjgl.sdl.SDLScancode.SDL_SCANCODE_KP_MINUS',
+	KEY_PAGE_UP      : 'KEY_PAGEUP',
+	KEY_PAGE_DOWN    : 'KEY_PAGEDOWN',
+	KEY_EQUAL        : 'KEY_EQUALS',
+	KEY_UNKNOWN      : 'UNKNOWN.getValue()',
+]
+
+def portWidener = { String text ->
+	moved.each { from, to -> text = text.replace("L${from.replace('.', '/')};", "L${to.replace('.', '/')};").replace("L${from.replace('.', '/')}\$", "L${to.replace('.', '/')}\$") }
+	text
+}
+
+def port = { String line ->
+	line = portWidener(line)
+	if (line.startsWith('import ')) {
+		moved.each { from, to -> line = line.replace("import ${from};", "import ${to};") }
+		line = line.replace('import org.lwjgl.glfw.GLFW;', 'import com.mojang.blaze3d.platform.InputConstants;')
+	}
+	line = line.replaceAll(/\bGLFW\.GLFW_([A-Z0-9_]+)\b/) { all, name ->
+		def key = keys[name] ?: name
+		key.contains('.') && !key.startsWith('UNKNOWN') ? key : 'InputConstants.' + key
+	}
+	line = line.replaceAll(/InputConstants\.isKeyDown\([\w.]+(?:\(\))?\s*,\s*/, 'InputConstants.isKeyDown(')
+	line = line.replaceAll(/\b(\w+)\.blocksMotion\(\)/,
+		'($1.isSolid() && !$1.is(net.minecraft.world.level.block.Blocks.COBWEB) && !$1.is(net.minecraft.world.level.block.Blocks.BAMBOO_SAPLING))')
+	line = line.replaceAll(/\.invulnerableTime\b/, '.getInvulnerableTime()')
+	line = line.replaceAll(/\.swing\((InteractionHand\.\w+)\)/, '.swing($1, net.minecraft.world.item.component.SwingAnimation.DEFAULT, false)')
+	line = line.replaceAll(/\.mulPose\(Axis\./, '.rotate(Axis.')
+	line = line.replaceAll(/new OptionsScreen\(([^,]+),\s*([\w.]+),\s*(?:true|false)\)/, 'new OptionsScreen($1, $2)')
+	line = line.replaceAll(/new MultiplayerOptionsScreen\(([^()]+)\)/, 'new net.minecraft.client.gui.screens.options.OnlineOptionsScreen($1, minecraft.options)')
+	line = line.replaceAll(/ConfirmLinkScreen\.confirmLinkNow\(([^,]+),\s*([A-Z_]+)\)/, 'ConfirmLinkScreen.confirmLinkNow($1, java.net.URI.create($2))')
+	line = line.replaceAll(/new EquipmentClientInfo\((Map\.of\(.*\))\)\);/, 'new EquipmentClientInfo($1, List.of()));')
+	line = line.replaceAll(/\.withSampler\(([^()]+)\)/, '.withUniform($1, com.mojang.renderpearl.api.pipeline.UniformType.COMBINED_IMAGE_SAMPLER)')
+	line = line.replaceAll(/\b(pass)\.setPipeline\((.+)\);/, '$1.setPipeline(com.mojang.blaze3d.systems.RenderSystem.getCompiledPipeline($2));')
+	line = line.replaceAll(/\b(pass)\.bindTexture\(/, '$1.setUniform(')
+	if (line.contains('.setOutputTarget(') || line.contains('import net.minecraft.client.renderer.rendertype.OutputTarget;')) {
+		return ''
+	}
+	line.replace('InputConstants.Type.KEYSYM', 'InputConstants.Type.KEYBOARD')
+		.replace('Util.getPlatform().open', 'com.mojang.blaze3d.Blaze3D.open')
+		.replace('InputConstants.KEY_RSUPER', 'InputConstants.KEY_RGUI')
+		.replace('InputConstants.KEY_LSUPER', 'InputConstants.KEY_LGUI')
+		.replace('.allItemsCopyStream()', '.itemCopies()')
+		.replace('.itemCopyStream()', '.itemCopies()')
+		.replace('import net.minecraft.client.gui.screens.MultiplayerOptionsScreen;', '')
+}
+
+fileTree(dir: file('src/main/resources'), include: '*.accesswidener').files.each { widener ->
+	def text = portWidener(widener.getText('UTF-8'))
+	if (text == widener.getText('UTF-8')) return
+	def ported = new File(portDir, "build/ported/${widener.name}")
+	ported.parentFile.mkdirs()
+	if (!ported.isFile() || ported.getText('UTF-8') != text) ported.setText(text, 'UTF-8')
+	ext.portedAccessWidener = ported
+	afterEvaluate {
+		tasks.named('processResources') {
+			inputs.file(buildscript.sourceFile)
+			filesMatching(widener.name) { filter { portWidener(it) } }
+		}
+	}
+}
+
+def portGlsl = { FileCopyDetails details ->
+	def next = [in: 0, out: 0]
+	details.filter { String line ->
+		if (line.startsWith('#version ')) {
+			return line + '\n#extension GL_ARB_separate_shader_objects : require'
+		}
+		def global = line =~ /^(in|out) (.+)$/
+		if (global) {
+			return "layout(location = ${next[global[0][1]]++}) ${global[0][1]} ${global[0][2]}"
+		}
+		line.replace('#moj_import ', '#include ')
+	}
+}
+
+afterEvaluate {
+	tasks.named('processResources') {
+		inputs.file(buildscript.sourceFile)
+		filesMatching(['**/*.fsh', '**/*.vsh']) { portGlsl(it) }
+	}
+	['main', 'client', 'test'].each { name ->
+		def set = sourceSets.findByName(name)
+		if (set == null) return
+		def sources = set.java.srcDirs as List
+		def builtBy = set.java.sourceDirectories.buildDependencies.getDependencies(null) as List
+		def overlay = new File(portDir, "src/${name}/java")
+		def ported = tasks.register("port${name.capitalize()}Java", Sync) {
+			dependsOn builtBy
+			inputs.file(buildscript.sourceFile)
+			duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+			if (overlay.isDirectory()) from(overlay)
+			sources.each { from(it) }
+			filter { port(it) }
+			into layout.buildDirectory.dir("ported/${name}")
+		}
+		set.java.srcDirs = []
+		set.java.srcDir ported
+	}
+}

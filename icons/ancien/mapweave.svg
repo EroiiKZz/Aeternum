@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+<path d="M22 34 L51 24 L78 34 L106 24 V91 L78 101 L51 91 L22 101 Z" fill="{surface}" stroke="{border}" stroke-width="4" stroke-linejoin="round"/>
+<path d="M51 25 V91 M78 34 V101" fill="none" stroke="{accent}" stroke-width="4"/>
+<path d="M30 43 L45 38 M30 54 L45 49 M85 46 L98 41 M85 58 L98 53" fill="none" stroke="{muted}" stroke-width="3" stroke-linecap="round"/>
+<path d="M65 42 C56 42 51 49 51 57 C51 68 65 80 65 80 C65 80 79 68 79 57 C79 49 74 42 65 42 Z" fill="{secondary}" stroke="{background}" stroke-width="3"/>
+<circle cx="65" cy="56" r="5" fill="{accent_light}"/>
+<path d="M25 35 L48 27" stroke="{accent}" stroke-width="4" stroke-linecap="round"/>
+</svg>

@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+<rect x="20" y="22" width="88" height="86" rx="9" fill="{surface}" stroke="{border}" stroke-width="3"/>
+<path d="M30 23.5 H56" stroke="{accent}" stroke-width="4" stroke-linecap="round"/>
+<g fill="{accent}">
+<rect x="30" y="36" width="12" height="12" rx="3"/>
+<rect x="30" y="55" width="12" height="12" rx="3"/>
+<rect x="30" y="74" width="12" height="12" rx="3"/>
+</g>
+<g fill="{text}">
+<rect x="48" y="39" width="34" height="6" rx="3"/>
+<rect x="48" y="58" width="26" height="6" rx="3"/>
+<rect x="48" y="77" width="30" height="6" rx="3"/>
+</g>
+<g fill="{secondary}">
+<rect x="88" y="42" width="3" height="5" rx="1"/><rect x="92.5" y="39.5" width="3" height="7.5" rx="1"/><rect x="97" y="37" width="3" height="10" rx="1"/>
+<rect x="88" y="61" width="3" height="5" rx="1"/><rect x="92.5" y="58.5" width="3" height="7.5" rx="1"/>
+<rect x="88" y="80" width="3" height="5" rx="1"/><rect x="92.5" y="77.5" width="3" height="7.5" rx="1"/><rect x="97" y="75" width="3" height="10" rx="1"/>
+</g>
+<rect x="97" y="56" width="3" height="10" rx="1" fill="{border}"/>
+<rect x="30" y="94" width="68" height="3" rx="1.5" fill="{border}"/>
+</svg>

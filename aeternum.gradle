@@ -1,0 +1,78 @@
+def aeternumRoot = file(project.aeternumRoot)
+def aeternumPkg = project.aeternumPackage
+def aeternumMain = project.aeternumMainClass
+def aeternumSkip = (project.findProperty('aeternumSkip') ?: []) as List
+def aeternumVariant = project.findProperty('aeternumClientVariant')
+def aeternumVariantShares = ['26.2': ['lang'], '1.21-mojang': ['lang']]
+def aeternumVariantSources = aeternumVariant == null ? [] : (aeternumVariantShares[aeternumVariant] ?: []) + [aeternumVariant]
+
+def aeternumGenerate = tasks.register('aeternumGenerate', Copy) {
+	from("${aeternumRoot}/src/main/java") {
+		include '**/*.java.tpl'
+		aeternumSkip.each { exclude "**/${it}.java.tpl" }
+		rename { name -> name.replace('.java.tpl', '.java') }
+		filter { line -> line.replace('__PKG__', aeternumPkg).replace('__MAIN__', aeternumMain) }
+		into "fr/imero/${aeternumPkg}"
+	}
+	into layout.buildDirectory.dir('generated/sources/aeternum')
+}
+
+sourceSets.main.java.srcDir aeternumGenerate
+
+def aeternumGenerateClient = tasks.register('aeternumGenerateClient', Copy) {
+	from("${aeternumRoot}/src/client/java-common") {
+		include '**/*.java.tpl'
+		aeternumSkip.each { exclude "**/${it}.java.tpl" }
+		rename { name -> name.replace('.java.tpl', '.java') }
+		filter { line -> line.replace('__PKG__', aeternumPkg).replace('__MAIN__', aeternumMain) }
+		into "fr/imero/${aeternumPkg}"
+	}
+	aeternumVariantSources.each { source ->
+		from("${aeternumRoot}/src/client/java-${source}") {
+			include '**/*.java.tpl'
+			aeternumSkip.each { exclude "**/${it}.java.tpl" }
+			rename { name -> name.replace('.java.tpl', '.java') }
+			filter { line -> line.replace('__PKG__', aeternumPkg).replace('__MAIN__', aeternumMain) }
+			into "fr/imero/${aeternumPkg}"
+		}
+	}
+	into layout.buildDirectory.dir('generated/sources/aeternum-client')
+}
+
+sourceSets.client.java.srcDir aeternumGenerateClient
+
+def aeternumVariantResources = aeternumVariant == null ? null
+	: file("${aeternumRoot}/src/client/resources-${aeternumVariant}")
+
+if (aeternumVariantResources != null && aeternumVariantResources.isDirectory()) {
+	def aeternumGenerateResources = tasks.register('aeternumGenerateResources', Copy) {
+		from(aeternumVariantResources) {
+			rename { name -> name.replace('__PKG__', aeternumPkg).replace('.tpl', '') }
+			filesMatching('**/*.tpl') {
+				filter { line -> line.replace('__PKG__', aeternumPkg).replace('__MAIN__', aeternumMain) }
+			}
+		}
+		into layout.buildDirectory.dir('generated/resources/aeternum-client')
+	}
+	sourceSets.client.resources.srcDir aeternumGenerateResources
+
+	def aeternumMixins = file("${aeternumVariantResources}/__PKG__.aeternum.mixins.json.tpl").isFile()
+		? "${aeternumPkg}.aeternum.mixins.json" : null
+	if (aeternumMixins != null) {
+		tasks.named('processResources') {
+			inputs.property('aeternumMixins', aeternumMixins)
+			doLast {
+				def manifest = new File(destinationDir, 'fabric.mod.json')
+				if (manifest.isFile()) {
+					def json = new groovy.json.JsonSlurper().parse(manifest)
+					def mixins = (json.mixins ?: []) as List
+					if (!mixins.any { (it instanceof Map ? it.config : it) == aeternumMixins }) {
+						mixins << [config: aeternumMixins, environment: 'client']
+						json.mixins = mixins
+						manifest.setText(groovy.json.JsonOutput.prettyPrint(groovy.json.JsonOutput.toJson(json)), 'UTF-8')
+					}
+				}
+			}
+		}
+	}
+}

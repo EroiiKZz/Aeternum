@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+<circle cx="64" cy="66" r="42" fill="{surface}" stroke="{accent}" stroke-width="4"/>
+<circle cx="64" cy="66" r="31" fill="none" stroke="{border}" stroke-width="2.5"/>
+<g stroke="{accent_dark}" stroke-width="3" stroke-linecap="round">
+<path d="M64 28 V35 M64 97 V104 M26 66 H33 M95 66 H102"/>
+<path d="M37.1 39.1 L41.4 43.4 M86.6 88.6 L90.9 92.9 M90.9 39.1 L86.6 43.4 M41.4 88.6 L37.1 92.9"/>
+</g>
+<circle cx="80" cy="54" r="10" fill="none" stroke="{secondary}" stroke-width="3"/>
+<path d="M38 92 L90 40" stroke="{accent}" stroke-width="5" stroke-linecap="round"/>
+<path d="M64 20 V26" stroke="{accent}" stroke-width="5" stroke-linecap="round"/>
+<circle cx="64" cy="66" r="6" fill="{accent_light}"/>
+<circle cx="47" cy="78" r="3" fill="{secondary}"/>
+</svg>
